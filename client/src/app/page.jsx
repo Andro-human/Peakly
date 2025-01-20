@@ -2,10 +2,23 @@
 
 import Image from "next/image";
 import { ConnectButton } from "thirdweb/react";
+import { useConnectionStatus } from "@thirdweb-dev/react";
 import { client } from "./client";
-// import peaklyIcon from "@public/peakly-logo-final.svg";
+import peaklyIcon from "../../public/peakly-logo-final.svg";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Home() {
+  // const connectionStatus =  useConnectionStatus();  // Check if the user is connected
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   if (connectionStatus) {
+  //     // Redirect to the dashboard if already connected
+  //     router.push("/dashboard");
+  //   }
+  // }, [connectionStatus, router]);
+
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
       <div className="py-20">
@@ -22,13 +35,13 @@ export default function Home() {
 function Header() {
   return (
     <header className="flex flex-col items-center mb-20 md:mb-20">
-      {/* <Image
+      <Image
         src={peaklyIcon}
         alt=""
         style={{
           filter: "drop-shadow(0px 0px 24px #a726a9a8)",
         }}
-      /> */}
+      />
 
       <h1 className="text-2xl md:text-6xl font-semibold md:font-bold tracking-tighter mb-6 text-zinc-100">
         Challenge.

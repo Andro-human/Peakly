@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
   IconArrowLeft,
@@ -8,9 +8,13 @@ import {
   IconUserBolt,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "../lib/utils";
+import peaklyIcon from "../../public/peakly-logo-final.svg"
+import { client } from "../app/client";
+import { ConnectButton } from "thirdweb/react";
+// import { useConnectionStatus } from "@thirdweb-dev/react";
+// import { useRouter } from "next/router";
 
 export function SidebarDemo({ children }) {
   const links = [
@@ -45,6 +49,16 @@ export function SidebarDemo({ children }) {
   ];
   const [open, setOpen] = useState(false);
 
+  // const connectionStatus = useConnectionStatus(); // Check if the user is connected
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   if (!connectionStatus) {
+  //     // Redirect to homepage if not connected
+  //     router.push("/");
+  //   }
+  // }, [connectionStatus, router]);
+
   return (
     <div
       className={cn(
@@ -63,21 +77,7 @@ export function SidebarDemo({ children }) {
             </div>
           </div>
           <div>
-            <SidebarLink
-              link={{
-                label: "Animesh Sinha",
-                href: "https://www.linkedin.com/in/androhuman/",
-                icon: (
-                  <Image
-                    src="https://img1.wsimg.com/isteam/ip/a13e352a-6035-4b18-a5f1-a63b97b07c5e/IMG20231108173843.jpg/:/rs=w:1920,m"
-                    className="h-7 w-7 flex-shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
-                ),
-              }}
-            />
+            <ConnectButton client={client} />
           </div>
         </SidebarBody>
       </Sidebar>
@@ -98,14 +98,11 @@ export const Logo = () => {
       href="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
-        Acet Labs
-      </motion.span>
+      <Image
+        src={peaklyIcon}
+        className="bg-[#09090b]"
+        alt="Avatar"
+      />
     </Link>
   );
 };
@@ -113,10 +110,14 @@ export const Logo = () => {
 export const LogoIcon = () => {
   return (
     <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+      href="dashboard"
+      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20 mt-6"
     >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+       <Image
+        src={peaklyIcon}
+        className="bg-[#09090b]"
+        alt="Avatar"
+      />
     </Link>
   );
 };
