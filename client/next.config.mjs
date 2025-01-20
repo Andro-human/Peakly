@@ -5,6 +5,9 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
+  images: {
+    domains: ['assets.aceternity.com', 'img1.wsimg.com'], // Allow images from this domain
+  },
 };
 
 export default nextConfig;
