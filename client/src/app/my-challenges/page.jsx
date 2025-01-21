@@ -32,6 +32,7 @@ const Profile = () => {
             ) : challenges && challenges.length > 0 ? (
               challenges.map((challenge, idx) => (
                 <CompaignCard
+                  key={idx}
                   idx={indices[idx]}
                   campaignAddress={challenge.owner}
                   challenge={challenge}
