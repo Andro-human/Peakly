@@ -39,7 +39,7 @@ const Profile = () => {
               ))
             ) : (
               <p className="text-xl mt-4 text-black">
-                You haven't created a challenge yet
+                You have not created a challenge yet
               </p>
             )}
           </div>
