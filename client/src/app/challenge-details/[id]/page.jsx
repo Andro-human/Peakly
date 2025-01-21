@@ -70,7 +70,7 @@ const ChallengeDetails = ({ params }) => {
         alert("Successfully Participated!");
       },
     });
-    console.log("transaction", transaction);
+    // console.log("transaction", transaction);
     // } catch (error) {
     //   console.error("Error resolving wager:", error);
     // }

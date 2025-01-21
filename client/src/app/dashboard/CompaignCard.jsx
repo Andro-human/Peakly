@@ -16,7 +16,6 @@ const CompaignCard = ({ idx, campaignAddress, challenge }) => {
     deadline,
     resolved,
   } = challenge;
-  console.log("key", idx);
   const router = useRouter();
   const formattedDeadline = new Date(Number(deadline) * 1000).toLocaleString();
 

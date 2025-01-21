@@ -7,7 +7,6 @@ import CompaignCard from "../dashboard/CompaignCard";
 
 const Profile = () => {
   const account = useActiveAccount();
-  console.log("account", account);
   const caller = account?.address;
   const { data, isPending } = useReadContract({
     contract,
@@ -15,11 +14,11 @@ const Profile = () => {
       "function getAllWagersCreatedByMe(address caller) view returns (uint256[], (address owner, string title, string description, uint256 deadline, uint256 totalAmount, string image, address[] participants, string[] options, uint256 betAmount, string[] availableOptions, bool resolved)[])",
     params: [caller],
   });
-  console.log("data", data);
+  // console.log("data", data);
   // Separate the data into two arrays
   const [indices, challenges] = data || [];
 
-  console.log("My Challenges", challenges, indices, isPending);
+  // console.log("My Challenges", challenges, indices, isPending);
 
   return (
     <SidebarDemo>
@@ -39,7 +38,7 @@ const Profile = () => {
                 />
               ))
             ) : (
-              <p className="text-xl mt-4 text-black ">
+              <p className="text-xl mt-4 text-black">
                 You haven't created a challenge yet
               </p>
             )}

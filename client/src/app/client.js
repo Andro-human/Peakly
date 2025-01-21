@@ -12,7 +12,7 @@ export const client = createThirdwebClient({
   clientId: clientId,
 });
 
-console.log("client", client);
+// console.log("client", client);
 export const contract = getContract({
   client,
   chain: defineChain(2442),

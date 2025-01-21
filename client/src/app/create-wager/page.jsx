@@ -21,14 +21,14 @@ const SignupFormDemo = () => {
 
   const handleFormFieldChange = (fieldName, e) => {
     setForm({ ...form, [fieldName]: e.target.value });
-    console.log("form", form);
+    // console.log("form", form);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
   };
   const _availableOptions = form.option.split(",");
-  console.log("_availableOptions", _availableOptions);
+  // console.log("_availableOptions", _availableOptions);
   return (
     <SidebarDemo>
       <div className="max-w-2xl md-w-4xl w-full mx-auto rounded-none md:rounded-2xl p-4 md:px-12 md:py-8 shadow-input bg-black">

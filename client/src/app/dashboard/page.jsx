@@ -8,7 +8,7 @@ import { useActiveAccount, useReadContract } from "thirdweb/react";
 
 const Dashboard = () => {
   const account = useActiveAccount();
-  console.log("account", account);
+  // console.log("account", account);
 
   const { data, isPending } = useReadContract({
     contract,
@@ -17,11 +17,11 @@ const Dashboard = () => {
     params: [account?.address],
   });
 
-  console.log("response all", data);
+  // console.log("response all", data);
   // Separate the response into two arrays
   const [indices, challenges] = data || [];
 
-  console.log("Challenges", challenges, indices, isPending);
+  // console.log("Challenges", challenges, indices, isPending);
 
   return (
     <SidebarDemo>
