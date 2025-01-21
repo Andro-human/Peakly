@@ -5,12 +5,10 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "../../lib/utils";
 import { SidebarDemo } from "../../components/Sidebar";
-import { checkIfImage } from "../../utils/index";
-import { useRouter } from "next/router";
+import { prepareContractCall, sendTransaction } from "thirdweb";
+import { contract } from "../client";
+import { TransactionButton } from "thirdweb/react";
 const SignupFormDemo = () => {
-  // const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  // const { createCampaign } = useStateContext();
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -18,6 +16,7 @@ const SignupFormDemo = () => {
     amount: "",
     image: "",
     option: "",
+    yourOption: "",
   });
 
   const handleFormFieldChange = (fieldName, e) => {
@@ -25,34 +24,21 @@ const SignupFormDemo = () => {
     console.log("form", form);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    checkIfImage(form.image, async (exists) => {
-      if (exists) {
-        setIsLoading(true);
-        // await createCampaign({
-        //   ...form,
-        //   target: ethers.utils.parseUnits(form.target, 18),
-        // });
-        setIsLoading(false);
-        console.log("here", form);
-        // router.push("/dashboard");
-      } else {
-        alert("Provide valid image URL");
-        setForm({ ...form, image: "" });
-      }
-    });
   };
-
+  const _availableOptions = form.option.split(",");
+  console.log("_availableOptions", _availableOptions);
   return (
     <SidebarDemo>
-      <div className="max-w-2xl md-w-4xl w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-12 shadow-input bg-black">
-        <h1 className="font-bold text-xl text-neutral-200">Create Challenge</h1>
-        <p className="text-sm max-w-sm mt-2 text-neutral-300">
+      <div className="max-w-2xl md-w-4xl w-full mx-auto rounded-none md:rounded-2xl p-4 md:px-12 md:py-8 shadow-input bg-black">
+        <h1 className="font-bold text-4xl text-neutral-200">
+          Create Challenge
+        </h1>
+        <p className="text-sm max-w-sm m-2 text-neutral-300">
           Create a Decentralized Challenge where you friends can participate.
         </p>
-        <form className="my-8" onSubmit={handleSubmit}>
+        <form className="mt-4" onSubmit={handleSubmit}>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -107,7 +93,7 @@ const SignupFormDemo = () => {
           </LabelInputContainer>
 
           <LabelInputContainer className="mb-4">
-            <Label htmlFor="options">Options (separate by commas)</Label>
+            <Label htmlFor="options">All Options (separate by commas)</Label>
             <Input
               id="options"
               placeholder="Donald Trump, Kamala Harris"
@@ -116,45 +102,49 @@ const SignupFormDemo = () => {
               required
             />
           </LabelInputContainer>
-          <button
-            className="bg-gradient-to-br relative group/btn to-neutral-600 block bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-            type="submit"
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="yourOption">Your Option</Label>
+            <Input
+              id="yourOption"
+              placeholder="Donald Trump"
+              type="text"
+              onChange={(e) => handleFormFieldChange("yourOption", e)}
+              required
+            />
+          </LabelInputContainer>
+          <TransactionButton
+            transaction={() =>
+              prepareContractCall({
+                contract,
+                method:
+                  "function createWager(string _title, string _description, uint256 _deadline, string _image, uint256 _betAmount, string[] _availableOptions, string _ownerOption) payable returns (uint256)",
+                params: [
+                  form.title,
+                  form.description,
+                  form.deadline,
+                  form.image,
+                  form.amount,
+                  _availableOptions,
+                  form.yourOption,
+                ],
+                value: form.amount,
+              })
+            }
+            onError={(error) => alert(`Error: ${error.message}`)}
+            onTransactionConfirmed={async () =>
+              alert("Participated successfully!")
+            }
+            style={{
+              marginTop: "1rem",
+              backgroundColor: "#2563EB",
+              color: "white",
+              padding: "1rem",
+              borderRadius: "0.375rem",
+              cursor: "pointer",
+            }}
           >
-            Submit new Challenge &rarr;
-            <BottomGradient />
-          </button>
-
-          <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-
-          {/* <div className="flex flex-col space-y-4">
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit">
-            <IconBrandGithub className="h-4 w-4 text-neutral-300" />
-            <span className="text-neutral-300 text-sm">
-              GitHub
-            </span>
-            <BottomGradient />
-          </button>
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit">
-            <IconBrandGoogle className="h-4 w-4 text-neutral-300" />
-            <span className="text-neutral-300 text-sm">
-              Google
-            </span>
-            <BottomGradient />
-          </button>
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit">
-            <IconBrandOnlyfans className="h-4 w-4 text-neutral-800 text-neutral-300" />
-            <span className="text-neutral-700 text-neutral-300 text-sm">
-              OnlyFans
-            </span>
-            <BottomGradient />
-          </button>
-        </div> */}
+            Participate
+          </TransactionButton>
         </form>
       </div>
     </SidebarDemo>

@@ -164,51 +164,61 @@ contract MyWagerContract {
         );
     }
 
-    function getAllWagersExceptOwn() public view returns (uint256[] memory, Wager[] memory) {
-        uint256 wagerCount = numberOfWagers;
-        uint256 resultCount = 0;
+   function getAllWagersExceptOwn(address caller) public view returns (uint256[] memory, Wager[] memory) {
+    uint256 wagerCount = numberOfWagers;
+    uint256 resultCount = 0;
 
-        for (uint256 i = 0; i < wagerCount; i++) {
-            if (wagers[i].owner != msg.sender) {
-                resultCount++;
-            }
+    // Count the number of wagers not created by the caller
+    for (uint256 i = 0; i < wagerCount; i++) {
+        if (wagers[i].owner != caller) {
+            resultCount++;
         }
-
-        uint256[] memory ids = new uint256[](resultCount);
-        Wager[] memory result = new Wager[](resultCount);
-        uint256 index = 0;
-        for (uint256 i = 0; i < wagerCount; i++) {
-            if (wagers[i].owner != msg.sender) {
-                ids[index] = i;
-                result[index] = wagers[i];
-                index++;
-            }
-        }
-
-        return (ids, result);
     }
 
-    function getAllWagersCreatedByMe() public view returns (uint256[] memory, Wager[] memory) {
-        uint256 wagerCount = numberOfWagers;
-        uint256 resultCount = 0;
+    // Initialize arrays to store results
+    uint256[] memory ids = new uint256[](resultCount);
+    Wager[] memory result = new Wager[](resultCount);
+    uint256 index = 0;
 
-        for (uint256 i = 0; i < wagerCount; i++) {
-            if (wagers[i].owner == msg.sender) {
-                resultCount++;
-            }
+    // Populate the arrays
+    for (uint256 i = 0; i < wagerCount; i++) {
+        if (wagers[i].owner != caller) {
+            ids[index] = i;
+            result[index] = wagers[i];
+            index++;
         }
-
-        uint256[] memory ids = new uint256[](resultCount);
-        Wager[] memory result = new Wager[](resultCount);
-        uint256 index = 0;
-        for (uint256 i = 0; i < wagerCount; i++) {
-            if (wagers[i].owner == msg.sender) {
-                ids[index] = i;
-                result[index] = wagers[i];
-                index++;
-            }
-        }
-
-        return (ids, result);
     }
+
+    return (ids, result);
+}
+
+
+    function getAllWagersCreatedByMe(address caller) public view returns (uint256[] memory, Wager[] memory) {
+    uint256 wagerCount = numberOfWagers;
+    uint256 resultCount = 0;
+
+    // Count the number of wagers created by the caller
+    for (uint256 i = 0; i < wagerCount; i++) {
+        if (wagers[i].owner == caller) {
+            resultCount++;
+        }
+    }
+
+    // Initialize arrays to store results
+    uint256[] memory ids = new uint256[](resultCount);
+    Wager[] memory result = new Wager[](resultCount);
+    uint256 index = 0;
+
+    // Populate the arrays
+    for (uint256 i = 0; i < wagerCount; i++) {
+        if (wagers[i].owner == caller) {
+            ids[index] = i;
+            result[index] = wagers[i];
+            index++;
+        }
+    }
+
+    return (ids, result);
+}
+
 }

@@ -2,19 +2,19 @@
 import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
   IconUserBolt,
+  IconWallet,
+  IconPlus,
+  IconDashboard,
+  IconLogout,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "../lib/utils";
-import peaklyIcon from "../../public/peakly-logo-final.svg"
+import peaklyIcon from "../../public/peakly-logo-final.svg";
 import { client } from "../app/client";
-import { ConnectButton } from "thirdweb/react";
-// import { useConnectionStatus } from "@thirdweb-dev/react";
-// import { useRouter } from "next/router";
+import { ConnectButton, useActiveAccount, useDisconnect } from "thirdweb/react";
+import { useRouter } from "next/navigation";
 
 export function SidebarDemo({ children }) {
   const links = [
@@ -22,42 +22,29 @@ export function SidebarDemo({ children }) {
       label: "Dashboard",
       href: "/dashboard",
       icon: (
-        <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconDashboard className="text-neutral-700 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Profile",
-      href: "/profile",
-      icon: (
-        <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
+      label: "My Challenges",
+      href: "/my-challenges",
+      icon: <IconUserBolt className="text-neutral-700 h-5 w-5 flex-shrink-0" />,
     },
     {
-      label: "Settings",
-      href: "/settings",
-      icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
-      label: "Logout",
-      href: "/logout",
-      icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
+      label: "Create Challenge",
+      href: "/create-wager",
+      icon: <IconPlus className="text-neutral-700 h-5 w-5 flex-shrink-0" />,
     },
   ];
   const [open, setOpen] = useState(false);
-
-  // const connectionStatus = useConnectionStatus(); // Check if the user is connected
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   if (!connectionStatus) {
-  //     // Redirect to homepage if not connected
-  //     router.push("/");
-  //   }
-  // }, [connectionStatus, router]);
+  const disconnect = useDisconnect();
+  const account = useActiveAccount();
+  const router = useRouter();
+  useEffect(() => {
+    if (!account) {
+      router.push("/");
+    }
+  }, [account, router]);
 
   return (
     <div
@@ -74,10 +61,21 @@ export function SidebarDemo({ children }) {
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
+              <button
+                onClick={() => disconnect}
+                className="mt-2 flex items-center gap-2 text-sm text-neutral-700 rounded-lg"
+              >
+                <IconLogout className="h-5 w-5 flex-shrink-0" />
+                {open && <span>Logout</span>}
+              </button>
             </div>
           </div>
           <div>
-            <ConnectButton client={client} />
+            {open ? (
+              <ConnectButton client={client} />
+            ) : (
+              <IconWallet className="text-neutral-700 h-5 w-5 flex-shrink-0" />
+            )}
           </div>
         </SidebarBody>
       </Sidebar>
@@ -98,11 +96,7 @@ export const Logo = () => {
       href="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
-      <Image
-        src={peaklyIcon}
-        className="bg-[#09090b]"
-        alt="Avatar"
-      />
+      <Image src={peaklyIcon} className="bg-[#09090b]" alt="Avatar" />
     </Link>
   );
 };
@@ -113,11 +107,7 @@ export const LogoIcon = () => {
       href="dashboard"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20 mt-6"
     >
-       <Image
-        src={peaklyIcon}
-        className="bg-[#09090b]"
-        alt="Avatar"
-      />
+      <Image src={peaklyIcon} className="bg-[#09090b]" alt="Avatar" />
     </Link>
   );
 };

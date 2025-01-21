@@ -1,23 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { ConnectButton } from "thirdweb/react";
-import { useConnectionStatus } from "@thirdweb-dev/react";
+import { ConnectButton, useActiveAccount } from "thirdweb/react";
 import { client } from "./client";
 import peaklyIcon from "../../public/peakly-logo-final.svg";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
 export default function Home() {
-  // const connectionStatus =  useConnectionStatus();  // Check if the user is connected
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   if (connectionStatus) {
-  //     // Redirect to the dashboard if already connected
-  //     router.push("/dashboard");
-  //   }
-  // }, [connectionStatus, router]);
+  const account = useActiveAccount();
+  const router = useRouter();
+  useEffect(() => {
+    if (account) {
+      // Redirect to the dashboard if already connected
+      router.push("/dashboard");
+    }
+  }, [account, router]);
 
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">

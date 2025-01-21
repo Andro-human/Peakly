@@ -1,27 +1,25 @@
 "use client";
 
-import React from "react";
+import { useActiveAccount, useReadContract } from "thirdweb/react";
 import { SidebarDemo } from "../../components/Sidebar";
 import { contract } from "../client";
-import CompaignCard from "./CompaignCard";
-import { useActiveAccount, useReadContract } from "thirdweb/react";
+import CompaignCard from "../dashboard/CompaignCard";
 
-const Dashboard = () => {
+const Profile = () => {
   const account = useActiveAccount();
   console.log("account", account);
-
+  const caller = account?.address;
   const { data, isPending } = useReadContract({
     contract,
     method:
-      "function getAllWagersExceptOwn(address caller) view returns (uint256[], (address owner, string title, string description, uint256 deadline, uint256 totalAmount, string image, address[] participants, string[] options, uint256 betAmount, string[] availableOptions, bool resolved)[])",
-    params: [account?.address],
+      "function getAllWagersCreatedByMe(address caller) view returns (uint256[], (address owner, string title, string description, uint256 deadline, uint256 totalAmount, string image, address[] participants, string[] options, uint256 betAmount, string[] availableOptions, bool resolved)[])",
+    params: [caller],
   });
-
-  console.log("response all", data);
-  // Separate the response into two arrays
+  console.log("data", data);
+  // Separate the data into two arrays
   const [indices, challenges] = data || [];
 
-  console.log("Challenges", challenges, indices, isPending);
+  console.log("My Challenges", challenges, indices, isPending);
 
   return (
     <SidebarDemo>
@@ -40,7 +38,9 @@ const Dashboard = () => {
                 />
               ))
             ) : (
-              <p className="text-xl mt-4 text-black ">No Challenges</p>
+              <p className="text-xl mt-4 text-black ">
+                You haven't created a challenge yet
+              </p>
             )}
           </div>
         </div>
@@ -49,4 +49,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Profile;
