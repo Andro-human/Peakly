@@ -66,54 +66,58 @@ const ChallengeDetails = ({ params }) => {
   return (
     <SidebarDemo>
       <button onClick={() => router.back()}>
-        <IconArrowLeft className="text-neutral-700 h-8 w-8 flex-shrink-0 ml-6 mt-6 " />
+        <IconArrowLeft className="text-neutral-700 h-8 w-8 flex-shrink-0 sm:ml-6 sm:mt-6" />
       </button>
-      <div className="max-w-3xl mx-auto p-6 bg-[#f6f6f6] shadow-lg rounded-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
+      <div className="max-w-3xl mx-auto p-2 sm:p-6 bg-[#f6f6f6] shadow-lg rounded-lg mb-6 border border-gray-200">
+        <h1 className="text-lg sm:text-3xl font-bold text-gray-800 mb-4">
+          {title}
+        </h1>
         <img
           src={image}
           alt={title}
-          className="w-full h-64 object-cover rounded-lg mb-6"
+          className="w-72 sm:w-full h-40 sm:h-64 object-cover rounded-lg mb-6"
         />
-        <p className="text-gray-600 mb-4">{description}</p>
+        <p className="text-wrap text-xs sm:text-sm text-gray-600 mb-4">
+          {description}
+        </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-3 sm:mb-6">
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Owner:</span>
-            <span className="text-sm font-medium text-gray-800 break-words">
+            <span className="text-xs sm:text-sm font-medium text-gray-800 break-words">
               {owner}
             </span>
           </div>
 
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Wager ID:</span>
-            <span className="text-lg font-medium text-gray-800">
+            <span className="text-xs sm:text-lg font-medium text-gray-800">
               {Number(id)}
             </span>
           </div>
 
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Deadline:</span>
-            <span className="text-lg font-medium text-gray-800">
+            <span className="text-xs sm:text-lg font-medium text-gray-800">
               {formattedDeadline}
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Bet Amount:</span>
-            <span className="text-lg font-medium text-gray-800">
+            <span className="text-xs sm:text-lg font-medium text-gray-800">
               {Number(betAmount)} ETH
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Total Pool:</span>
-            <span className="text-lg font-medium text-gray-800">
+            <span className="text-xs sm:text-lg font-medium text-gray-800">
               {Number(totalAmount)} ETH
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Resolved:</span>
             <span
-              className={`text-lg font-medium ${
+              className={`text-xs sm:text-lg font-medium ${
                 resolved ? "text-green-500" : "text-red-500"
               }`}
             >
@@ -122,12 +126,12 @@ const ChallengeDetails = ({ params }) => {
           </div>
 
           <div className="mt-4 sm:col-span-2">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+            <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-2">
               Available Options:
             </h2>
-            <ul className="list-disc list-inside flex space-x-4 text-gray-700">
+            <ul className="list-disc list-inside flex space-x-4 text-gray-700 text-xs sm:text-lg">
               {availableOptions.map((option, idx) => (
-                <li key={idx} className="mb-1">
+                <li key={idx} className="sm:mb-1">
                   {option}
                 </li>
               ))}
@@ -141,7 +145,7 @@ const ChallengeDetails = ({ params }) => {
                   setModalType("resolve");
                 }}
                 style={{
-                  marginTop: "1rem",
+                  // marginTop: "1rem",
                   backgroundColor: "#2563EB",
                   color: "white",
                   padding: "1rem",
@@ -159,7 +163,7 @@ const ChallengeDetails = ({ params }) => {
                   setModalType("participate");
                 }}
                 style={{
-                  marginTop: "1rem",
+                  // marginTop: "1rem",
                   backgroundColor: "#10B981",
                   color: "white",
                   padding: "1rem",
@@ -176,18 +180,23 @@ const ChallengeDetails = ({ params }) => {
         <div>
           {participantsData && participantsData[0].length > 0 && (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              <h2 className="text-xs sm:text-lg font-semibold text-gray-800 mb-2">
                 Participants:
               </h2>
               <ul className="list-disc list-inside flex flex-col space-y-2 text-gray-700">
                 {participantsData[0].map((participant, idx) => (
                   <li key={idx} className="mb-1">
-                    <span className="font-medium text-gray-800">Address:</span>{" "}
-                    {participant}
-                    <span className="font-medium text-gray-800 ml-2">
+                    <span className="text-sm sm:text-lg text-gray-800">
+                      Address:
+                    </span>{" "}
+                    <span className="text-xs sm:text-lg">{participant}</span>
+                    <br className="sm:hidden" />
+                    <span className="text-sm sm:text-lg text-gray-800 ml-2">
                       Option:
                     </span>{" "}
-                    {participantsData[1][idx]}
+                    <span className="text-xs sm:text-lg">
+                      {participantsData[1][idx]}
+                    </span>
                   </li>
                 ))}
               </ul>
