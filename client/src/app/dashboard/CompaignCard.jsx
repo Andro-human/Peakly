@@ -4,18 +4,8 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 const CompaignCard = ({ idx, campaignAddress, challenge }) => {
-  const {
-    title,
-    description,
-    image,
-    availableOptions,
-    options,
-    participants,
-    betAmount,
-    totalAmount,
-    deadline,
-    resolved,
-  } = challenge;
+  const { title, description, image, betAmount, totalAmount, deadline } =
+    challenge;
   const router = useRouter();
   const formattedDeadline = new Date(Number(deadline) * 1000).toLocaleString();
 
@@ -26,18 +16,11 @@ const CompaignCard = ({ idx, campaignAddress, challenge }) => {
 
   return (
     <div
-      className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
+      className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer flex flex-col"
       onClick={handleCardClick}
     >
       <div className="relative">
         <img src={image} alt={title} className="w-full h-48 object-cover" />
-        <span
-          className={`absolute top-2 left-2 px-3 py-1 rounded-full text-sm font-semibold ${
-            resolved ? "bg-green-500 text-white" : "bg-yellow-400 text-black"
-          }`}
-        >
-          {resolved ? "Resolved" : "Ongoing"}
-        </span>
       </div>
 
       <div className="p-4">
@@ -61,6 +44,8 @@ const CompaignCard = ({ idx, campaignAddress, challenge }) => {
           {formattedDeadline}
         </div>
       </div>
+
+      <div className="flex-grow" />
 
       {/* Footer */}
       <div className="bg-gray-100 p-4 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mt-auto">

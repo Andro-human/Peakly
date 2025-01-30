@@ -164,11 +164,23 @@ contract MyWagerContract {
         );
     }
 
-   function getAllWagersExceptOwn(address caller) public view returns (uint256[] memory, Wager[] memory) {
+    function hasParticipated(uint256 _id, address _user) public view returns (bool) {
+        require(_id < numberOfWagers, "Invalid wager ID.");
+        Wager storage wager = wagers[_id];
+
+        for (uint256 i = 0; i < wager.participants.length; i++) {
+            if (wager.participants[i] == _user) {
+                return true; // The user has participated
+            }
+        }
+        return false; // The user has not participated
+    }
+
+   function getAllWagersExceptOwn(address caller) public view returns (uint256[] memory, Wager[] memory, bool[] memory) {
     uint256 wagerCount = numberOfWagers;
     uint256 resultCount = 0;
 
-    // Count the number of wagers not created by the caller
+    // Count the number of wagers that the caller has participated in or not
     for (uint256 i = 0; i < wagerCount; i++) {
         if (wagers[i].owner != caller) {
             resultCount++;
@@ -178,18 +190,20 @@ contract MyWagerContract {
     // Initialize arrays to store results
     uint256[] memory ids = new uint256[](resultCount);
     Wager[] memory result = new Wager[](resultCount);
+    bool[] memory participationStatus = new bool[](resultCount); // true = participated, false = not participated
     uint256 index = 0;
 
-    // Populate the arrays
+    // Populate the arrays with the wagers and participation status
     for (uint256 i = 0; i < wagerCount; i++) {
         if (wagers[i].owner != caller) {
             ids[index] = i;
             result[index] = wagers[i];
+            participationStatus[index] = hasParticipated(i, caller); // Check if the caller has participated
             index++;
         }
     }
 
-    return (ids, result);
+    return (ids, result, participationStatus);
 }
 
 

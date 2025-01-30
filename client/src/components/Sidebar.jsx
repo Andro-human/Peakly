@@ -13,7 +13,12 @@ import Image from "next/image";
 import { cn } from "../lib/utils";
 import peaklyIcon from "../../public/peakly-logo-final.svg";
 import { client } from "../app/client";
-import { ConnectButton, useActiveAccount, useDisconnect } from "thirdweb/react";
+import {
+  ConnectButton,
+  useActiveAccount,
+  useDisconnect,
+  useActiveWallet,
+} from "thirdweb/react";
 import { useRouter } from "next/navigation";
 
 export function SidebarDemo({ children }) {
@@ -37,7 +42,8 @@ export function SidebarDemo({ children }) {
     },
   ];
   const [open, setOpen] = useState(false);
-  const disconnect = useDisconnect();
+  const wallet = useActiveWallet();
+  const { disconnect } = useDisconnect();
   const account = useActiveAccount();
   const router = useRouter();
   useEffect(() => {
@@ -62,7 +68,9 @@ export function SidebarDemo({ children }) {
                 <SidebarLink key={idx} link={link} />
               ))}
               <button
-                onClick={() => disconnect}
+                onClick={() => {
+                  disconnect(wallet);
+                }}
                 className="mt-2 flex items-center gap-2 text-sm text-neutral-700 rounded-lg"
               >
                 <IconLogout className="h-5 w-5 flex-shrink-0" />
@@ -82,7 +90,7 @@ export function SidebarDemo({ children }) {
 
       {/* Render the passed children here */}
       <div className="flex flex-1">
-        <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
+        <div className="p-2 md:p-4 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-auto ">
           {children} {/* Display the passed dashboard component */}
         </div>
       </div>

@@ -5,24 +5,20 @@ import { cn } from "../../lib/utils";
 import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
 
 const Input = React.forwardRef(({ className, type, ...props }, ref) => {
-  const radius = 100; 
+  const radius = 100;
   const [visible, setVisible] = React.useState(false);
 
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
-  function handleMouseMove({
-    currentTarget,
-    clientX,
-    clientY
-  }) {
+  function handleMouseMove({ currentTarget, clientX, clientY }) {
     let { left, top } = currentTarget.getBoundingClientRect();
 
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   }
   return (
-    (<motion.div
+    <motion.div
       style={{
         background: useMotionTemplate`
       radial-gradient(
@@ -35,7 +31,8 @@ const Input = React.forwardRef(({ className, type, ...props }, ref) => {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
-      className="p-[2px] rounded-lg transition duration-300 group/input">
+      className="p-[2px] rounded-lg transition duration-300 group/input max-w-md"
+    >
       <input
         type={type}
         className={cn(
@@ -44,13 +41,14 @@ const Input = React.forwardRef(({ className, type, ...props }, ref) => {
         focus-visible:outline-none focus-visible:ring-[2px]  focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
          disabled:cursor-not-allowed disabled:opacity-50
          dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
-         group-hover/input:shadow-none transition duration-400
+         group-hover/input:shadow-none transition duration-400 
          `,
           className
         )}
         ref={ref}
-        {...props} />
-    </motion.div>)
+        {...props}
+      />
+    </motion.div>
   );
 });
 Input.displayName = "Input";

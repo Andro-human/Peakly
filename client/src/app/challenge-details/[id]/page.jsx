@@ -3,13 +3,12 @@
 import React, { useState } from "react";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 import { contract } from "../../client";
-import { prepareContractCall } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
 import { SidebarDemo } from "../../../components/Sidebar";
-
+import Modal from "./modal";
+import { IconArrowLeft } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 const ChallengeDetails = ({ params }) => {
   const { id: _id } = params; // Get the ID from the URL
-  const { mutate: sendTransaction } = useSendTransaction();
   const { data: details, isPending } = useReadContract({
     contract,
     method:
@@ -17,7 +16,16 @@ const ChallengeDetails = ({ params }) => {
     params: [_id],
   });
 
+  const { data: participantsData, isParticipantsPending } = useReadContract({
+    contract,
+    method:
+      "function getParticipants(uint256 _id) view returns (address[], string[])",
+    params: [_id],
+  });
   const account = useActiveAccount(); // Get the active account
+  const isParticipant = participantsData?.[0]?.includes(account?.address);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
 
   if (isPending) {
     return (
@@ -49,67 +57,16 @@ const ChallengeDetails = ({ params }) => {
     availableOptions,
   ] = details;
 
-  const onResolveClick = async (e) => {
-    e.preventDefault();
-    const winningOptionFromPrompt = prompt("Please select a winning option");
-    if (!winningOptionFromPrompt) {
-      alert("Please select a winning option.");
-      return;
-    }
-
-    // try {
-    const transaction = await prepareContractCall({
-      contract,
-      method: "function resolveWager(uint256 _id, string winningOption)",
-      params: [id, winningOptionFromPrompt],
-    });
-
-    sendTransaction(transaction, {
-      onError: (error) => alert(`Error: ${error.message}`),
-      onTransactionConfirmed: () => {
-        alert("Successfully Participated!");
-      },
-    });
-    // console.log("transaction", transaction);
-    // } catch (error) {
-    //   console.error("Error resolving wager:", error);
-    // }
-  };
-
-  const onParticipateClick = async (e) => {
-    e.preventDefault();
-    const userOption = prompt("Please select an option");
-    if (!userOption) {
-      alert("Please select an option.");
-      return;
-    }
-
-    // try {
-    const transaction = prepareContractCall({
-      contract,
-      method:
-        "function participateToWager(uint256 _id, string _option) payable",
-      params: [_id, userOption],
-      value: betAmount,
-    });
-    sendTransaction(transaction, {
-      onError: (error) => alert(`Error: ${error.message}`),
-      onTransactionConfirmed: () => {
-        alert("Successfully Participated!");
-      },
-    });
-    // } catch (error) {
-    //   Alert("Error resolving wager:", error);
-    // }
-  };
-
   const formattedDeadline = new Date(Number(deadline) * 1000).toLocaleString();
 
   const isOwner = account && account.address === owner; // Check if the connected account is the owner
-
+  const router = useRouter();
   return (
     <SidebarDemo>
-      <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <button onClick={() => router.back()}>
+        <IconArrowLeft className="text-neutral-700 h-8 w-8 flex-shrink-0 ml-6 mt-6 " />
+      </button>
+      <div className="max-w-3xl mx-auto p-6 bg-[#f6f6f6] shadow-lg rounded-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
         <img
           src={image}
@@ -118,19 +75,21 @@ const ChallengeDetails = ({ params }) => {
         />
         <p className="text-gray-600 mb-4">{description}</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Owner:</span>
-            <span className="text-lg font-medium text-gray-800 break-words">
+            <span className="text-sm font-medium text-gray-800 break-words">
               {owner}
             </span>
           </div>
+
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Wager ID:</span>
             <span className="text-lg font-medium text-gray-800">
               {Number(id)}
             </span>
           </div>
+
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Deadline:</span>
             <span className="text-lg font-medium text-gray-800">
@@ -160,11 +119,11 @@ const ChallengeDetails = ({ params }) => {
             </span>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 sm:col-span-2">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Available Options:
             </h2>
-            <ul className="list-disc list-inside text-gray-700">
+            <ul className="list-disc list-inside flex space-x-4 text-gray-700">
               {availableOptions.map((option, idx) => (
                 <li key={idx} className="mb-1">
                   {option}
@@ -172,11 +131,13 @@ const ChallengeDetails = ({ params }) => {
               ))}
             </ul>
           </div>
-
           <div className="mt-4">
-            {isOwner ? (
+            {isOwner && !resolved && (
               <button
-                onClick={onResolveClick}
+                onClick={() => {
+                  setModalOpen(true);
+                  setModalType("resolve");
+                }}
                 style={{
                   marginTop: "1rem",
                   backgroundColor: "#2563EB",
@@ -188,9 +149,13 @@ const ChallengeDetails = ({ params }) => {
               >
                 Resolve
               </button>
-            ) : (
+            )}
+            {!isParticipant && !resolved && (
               <button
-                onClick={onParticipateClick}
+                onClick={() => {
+                  setModalOpen(true);
+                  setModalType("participate");
+                }}
                 style={{
                   marginTop: "1rem",
                   backgroundColor: "#10B981",
@@ -205,7 +170,37 @@ const ChallengeDetails = ({ params }) => {
             )}
           </div>
         </div>
+
+        <div>
+          {participantsData && participantsData[0].length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Participants:
+              </h2>
+              <ul className="list-disc list-inside flex flex-col space-y-2 text-gray-700">
+                {participantsData[0].map((participant, idx) => (
+                  <li key={idx} className="mb-1">
+                    <span className="font-medium text-gray-800">Address:</span>{" "}
+                    {participant}
+                    <span className="font-medium text-gray-800 ml-2">
+                      Option:
+                    </span>{" "}
+                    {participantsData[1][idx]}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
+      <Modal
+        isOpen={modalOpen}
+        modalType={modalType}
+        onClose={() => setModalOpen(false)}
+        options={availableOptions}
+        betAmount={betAmount}
+        id={_id}
+      />
     </SidebarDemo>
   );
 };
