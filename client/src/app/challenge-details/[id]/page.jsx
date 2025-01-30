@@ -22,6 +22,9 @@ const ChallengeDetails = ({ params }) => {
       "function getParticipants(uint256 _id) view returns (address[], string[])",
     params: [_id],
   });
+
+  const router = useRouter();
+
   const account = useActiveAccount(); // Get the active account
   const isParticipant = participantsData?.[0]?.includes(account?.address);
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,7 +63,6 @@ const ChallengeDetails = ({ params }) => {
   const formattedDeadline = new Date(Number(deadline) * 1000).toLocaleString();
 
   const isOwner = account && account.address === owner; // Check if the connected account is the owner
-  const router = useRouter();
   return (
     <SidebarDemo>
       <button onClick={() => router.back()}>
